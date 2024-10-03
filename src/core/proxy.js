@@ -73,7 +73,20 @@ const useProxyPer = {
         if (proxy) {await requestHandler(request, proxy, overrides)}
         else {request.continue(overrides)}
     },
-
+    CdpHTTPRequest: async (request, data) => {
+        let proxy, overrides;
+        // Separate proxy and overrides
+        if (type(data) === "object") {
+            if (Object.keys(data).length !== 0) {
+                proxy = data.proxy;
+                delete data.proxy;
+                overrides = data;
+            }
+        } else {proxy = data}
+        // Skip request if proxy omitted
+        if (proxy) {await requestHandler(request, proxy, overrides)}
+        else {request.continue(overrides)}
+    },
     // Call this if page object passed
     CDPPage: async (page, proxy) => {
         await page.setRequestInterception(true);
